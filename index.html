@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Interval Timer</title>
+<style>
+body {
+  background-color: green; /* Initial background color */
+  transition: background-color 1s ease; /* Smooth color transition */
+  font-family: sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh; /* Ensure full viewport height */
+  margin: 0; /* Remove default margins */
+}
+
+#timer-display {
+  font-size: 48px;
+  margin-bottom: 20px;
+}
+
+#input-area {
+    margin-bottom: 20px;
+}
+
+</style>
+</head>
+<body>
+
+<div id="input-area">
+    <label for="num-intervals">Number of Intervals:</label>
+    <input type="number" id="num-intervals" value="1" min="1">
+    <button onclick="startTimer()">Start</button>
+</div>
+
+<div id="timer-display">00:00</div>
+
+
+<script>
+let timerDisplay = document.getElementById('timer-display');
+let numIntervalsInput = document.getElementById('num-intervals');
+let timerInterval;
+let startTime;
+let intervalDuration;
+let currentInterval = 0;
+let intervals = [];
+
+function startTimer() {
+    currentInterval = 0;
+    intervals = []; // Clear previous intervals
+
+    let numIntervals = parseInt(numIntervalsInput.value);
+    if (isNaN(numIntervals) || numIntervals <= 0) {
+        alert("Please enter a valid number of intervals.");
+        return;
+    }
+
+    let intervalDurationInput = prompt("Enter the duration of each interval in seconds:", 60); // Default 1 minute
+    intervalDuration = parseInt(intervalDurationInput);
+
+    if (isNaN(intervalDuration) || intervalDuration <= 0) {
+        alert("Please enter a valid interval duration.");
+        return;
+    }
+
+    for (let i = 0; i < numIntervals; i++) {
+        intervals.push(intervalDuration); // Store interval durations
+    }
+
+    startTime = Date.now();
+    currentInterval = 0;
+    updateDisplay();
+    clearInterval(timerInterval); // Clear any existing timer
+    timerInterval = setInterval(updateDisplay, 1000);
+}
+
+
+function updateDisplay() {
+    let elapsedTime = Math.floor((Date.now() - startTime) / 1000);
+    let remainingTime = intervals[currentInterval] - elapsedTime;
+
+    if (remainingTime < -10) { // Past interval duration + 10 sec red
+        clearInterval(timerInterval);
+        return; // Timer finished
+    }
+
+    if (remainingTime <= 0) {
+        document.body.style.backgroundColor = "red";
+        if (remainingTime >= -10) { // 10 seconds past the interval, stay red
+            let displayTime = Math.abs(remainingTime);
+            timerDisplay.textContent = `-${String(displayTime).padStart(2, '0')}`; // Show negative time
+        } else {
+            currentInterval++;
+            if (currentInterval < intervals.length) { // Move to next interval
+                startTime = Date.now(); // Reset start time for the new interval
+                remainingTime = intervals[currentInterval]; // Update remaining time
+            } else {
+                clearInterval(timerInterval); // All intervals complete
+                return;
+            }
+        }
+
+    } else if (remainingTime <= 10) {
+        document.body.style.backgroundColor = "yellow";
+    } else {
+        document.body.style.backgroundColor = "green";
+    }
+
+    let minutes = Math.floor(remainingTime / 60);
+    let seconds = remainingTime % 60;
+    timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+}
+
+</script>
+
+</body>
+</html>
