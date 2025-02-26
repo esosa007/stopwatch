@@ -1,0 +1,42 @@
+body {
+    font-family: sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+    background-color: green; /* Initial background color */
+    transition: background-color 1s ease; /* Smooth color transition */
+  }
+
+  #timerFace {
+    margin: 5px;
+    padding: 5px;
+    background-color: lightgray;
+    border-radius: 5px;
+  }
+  
+  #timer {
+    font-size: 6em;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    background-color: white;
+  }
+  
+  input {
+    margin: 5px;
+    padding: 5px;
+  }
+  
+  button {
+    margin: 5px;
+    padding: 8px 16px;
+    border: none;
+    cursor: pointer;
+  }
+  
+  #controls {
+      display: flex;
+      gap: 10px; /* Space between buttons */
+  }

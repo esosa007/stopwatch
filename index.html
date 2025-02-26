@@ -1,118 +1,41 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<title>Interval Timer</title>
-<style>
-body {
-  background-color: green; /* Initial background color */
-  transition: background-color 1s ease; /* Smooth color transition */
-  font-family: sans-serif;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh; /* Ensure full viewport height */
-  margin: 0; /* Remove default margins */
-}
-
-#timer-display {
-  font-size: 48px;
-  margin-bottom: 20px;
-}
-
-#input-area {
-    margin-bottom: 20px;
-}
-
-</style>
+    <title>Stopwatch Timer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
+    <div id="timer">00:00:00</div>
 
-<div id="input-area">
-    <label for="num-intervals">Number of Intervals:</label>
-    <input type="number" id="num-intervals" value="1" min="1">
-    <button onclick="startTimer()">Start</button>
-</div>
-
-<div id="timer-display">00:00</div>
-
-
-<script>
-let timerDisplay = document.getElementById('timer-display');
-let numIntervalsInput = document.getElementById('num-intervals');
-let timerInterval;
-let startTime;
-let intervalDuration;
-let currentInterval = 0;
-let intervals = [];
-
-function startTimer() {
-    currentInterval = 0;
-    intervals = []; // Clear previous intervals
-
-    let numIntervals = parseInt(numIntervalsInput.value);
-    if (isNaN(numIntervals) || numIntervals <= 0) {
-        alert("Please enter a valid number of intervals.");
-        return;
-    }
-
-    let intervalDurationInput = prompt("Enter the duration of each interval in seconds:", 60); // Default 1 minute
-    intervalDuration = parseInt(intervalDurationInput);
-
-    if (isNaN(intervalDuration) || intervalDuration <= 0) {
-        alert("Please enter a valid interval duration.");
-        return;
-    }
-
-    for (let i = 0; i < numIntervals; i++) {
-        intervals.push(intervalDuration); // Store interval durations
-    }
-
-    startTime = Date.now();
-    currentInterval = 0;
-    updateDisplay();
-    clearInterval(timerInterval); // Clear any existing timer
-    timerInterval = setInterval(updateDisplay, 1000);
-}
+    <div id="timerFace"> 
+        <div id="inputs">
+            <div>
+                <label for="interval">Interval (seconds):</label>
+                <input type="number" id="interval" value="25">
+            </div>
+            <div>
+                <label for="numIntervals">Number of Intervals:</label>
+                <input type="number" id="numIntervals" value="4">
+            </div>
+        </div>
+    
+        <div id="controls">
+            <button class="btn btn-info" id="start">Start</button>
+            <button class="btn btn-info" id="pause">Pause</button>
+            <button class="btn btn-warning" id="stop">Stop</button>
+            <button class="btn btn-danger" id="reset">Reset</button>
+        </div>
+    </div>
 
 
-function updateDisplay() {
-    let elapsedTime = Math.floor((Date.now() - startTime) / 1000);
-    let remainingTime = intervals[currentInterval] - elapsedTime;
-
-    if (remainingTime < -10) { // Past interval duration + 10 sec red
-        clearInterval(timerInterval);
-        return; // Timer finished
-    }
-
-    if (remainingTime <= 0) {
-        document.body.style.backgroundColor = "red";
-        if (remainingTime >= -10) { // 10 seconds past the interval, stay red
-            let displayTime = Math.abs(remainingTime);
-            timerDisplay.textContent = `-${String(displayTime).padStart(2, '0')}`; // Show negative time
-        } else {
-            currentInterval++;
-            if (currentInterval < intervals.length) { // Move to next interval
-                startTime = Date.now(); // Reset start time for the new interval
-                remainingTime = intervals[currentInterval]; // Update remaining time
-            } else {
-                clearInterval(timerInterval); // All intervals complete
-                return;
-            }
-        }
-
-    } else if (remainingTime <= 10) {
-        document.body.style.backgroundColor = "yellow";
-    } else {
-        document.body.style.backgroundColor = "green";
-    }
-
-    let minutes = Math.floor(remainingTime / 60);
-    let seconds = remainingTime % 60;
-    timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-}
-
-</script>
-
+    <script src="index.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
 </body>
+
 </html>

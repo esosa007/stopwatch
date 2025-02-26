@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Timer</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: green;
+            transition: background-color 1s ease;
+        }
+
+        #timer-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #timer {
+            font-size: 4em;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 10px;
+        }
+
+        #button-group {
+            /* Container for start/pause/stop/reset */
+            display: flex;
+            gap: 10px;
+            /* Space between buttons */
+            margin-bottom: 10px;
+            /* Space below buttons */
+        }
+
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #lap-list {
+            margin-top: 10px;
+            list-style: none;
+            padding: 0;
+        }
+
+        #lap-list li {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="timer-container">
+        <div id="timer">25:00</div>
+        <div id="button-group">
+            <button id="startButton">Start</button>
+            <button id="pauseButton">Pause</button>
+            <button id="stopButton">Stop</button>
+            <button id="resetButton">Reset</button>
+            <button id="lapButton">Lap</button>
+        </div>
+        <ul id="lap-list"></ul>
+    </div>
+
+    <script>
+        let timerDisplay = document.getElementById('timer');
+        let startTime = 25 * 60;
+        let timeLeft = startTime;
+        let timerInterval;
+        let lapTimes = [];
+        let lapList = document.getElementById('lap-list');
+        let lapButton = document.getElementById('lapButton');
+        let startButton = document.getElementById('startButton');
+        let pauseButton = document.getElementById('pauseButton');
+        let stopButton = document.getElementById('stopButton');
+        let resetButton = document.getElementById('resetButton');
+        let timerRunning = false; // Flag to track timer state
+
+
+        function updateDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function startTimer() {
+            if (!timerRunning) { // Prevent multiple start intervals
+                timerInterval = setInterval(() => {
+                    timeLeft--;
+                    updateDisplay();
+
+                    if (timeLeft <= 10) {
+                        document.body.style.backgroundColor = 'yellow';
+                    }
+
+                    if (timeLeft < 0) {
+                        clearInterval(timerInterval);
+                        document.body.style.backgroundColor = 'red';
+                        timerDisplay.textContent = "Time's up!";
+                        timerRunning = false; // Timer is no longer running
+
+                    }
+                }, 1000);
+                timerRunning = true;
+                startButton.disabled = true;  // Disable start while running
+                pauseButton.disabled = false; // Enable pause
+            }
+        }
+
+        function pauseTimer() {
+            if (timerRunning) {
+                clearInterval(timerInterval);
+                timerRunning = false;
+                startButton.disabled = false; // Enable start
+                pauseButton.disabled = true; // Disable pause
+            }
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+            timerRunning = false;
+            timeLeft = startTime; // Reset time
+            updateDisplay();
+            document.body.style.backgroundColor = 'green'; // Reset background
+            startButton.disabled = false; // Enable Start
+            pauseButton.disabled = true; // Disable Pause
+        }
+
+        function resetTimer() {
+            stopTimer(); // Stop and reset the timer
+            lapTimes = []; // Clear lap times
+            lapList.innerHTML = ''; // Clear lap list display
+        }
+
+
+        lapButton.addEventListener('click', () => {
+            if (timerRunning) {
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                const lapTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                lapTimes.push(lapTime);
+
+                const newLapItem = document.createElement('li');
+                newLapItem.textContent = `Lap ${lapTimes.length}: ${lapTime}`;
+                lapList.appendChild(newLapItem);
+            }
+        });
+
+        startButton.addEventListener('click', startTimer);
+        pauseButton.addEventListener('click', pauseTimer);
+        stopButton.addEventListener('click', stopTimer);
+        resetButton.addEventListener('click', resetTimer);
+
+        // Initialize button states:
+        pauseButton.disabled = true; // Initially disable Pause
+
+        updateDisplay(); // Display initial time
+
+    </script>
+
+</body>
+
+</html>
